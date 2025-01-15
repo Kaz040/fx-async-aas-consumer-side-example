@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  aasx-server:
+    container_name: aasx-server
+    hostname: aasx-server
+    image: adminshellio/aasx-server-blazor-for-demo:v3latest
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./source/aasx:/AasxServerBlazor/aasxs
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+      - ENV ASPNETCORE_URLS=http://+:5001
+      - ENV ASPNETCORE_HTTP_PORTS=5001
+    command: --start-index 0 --no-security --edit --data-path /usr/share/aasxs --external-blazor http://localhost:5001
+
+  consumer:
+      container_name: consumer-app
+      build: ./source
+      restart: unless-stopped
+      volumes:
+        - ./source:/consumerapp
+      depends_on:
+        - aasx-server
